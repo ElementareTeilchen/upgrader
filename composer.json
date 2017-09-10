@@ -1,0 +1,17 @@
+{
+    "name": "elementareteilchen/upgrader",
+    "type": "typo3-cms-extension",
+    "license": "GPL-2.0+",
+    "authors": [
+        {
+            "name": "Franz Kugelmann",
+            "email": "franz.kugelmann@elementare-teilchen.de"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "ElementareTeilchen\\Upgrader\\": "Classes"
+        }
+    },
+    "require": {}
+}
