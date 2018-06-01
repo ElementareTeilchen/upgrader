@@ -1,6 +1,9 @@
 #!/bin/bash
 
-# hier kommt alles rein, was direkt die Migration von 6.2LTS auf 8LTS betrifft
+SCRIPT_DIR=`realpath $(dirname $0)`
+PROJECT_ROOT=`realpath "${SCRIPT_DIR}/../../../../"`
+TYPO3_BIN='${TYPO3_BIN}'
+#TYPO3_BIN='./vendor/bin/typo3cms'
 
 if [ -z "$2" ]; then
     echo -e "----------------------------------------------------------------------------------------------"
@@ -10,9 +13,6 @@ if [ -z "$2" ]; then
     echo -e "----------------------------------------------------------------------------------------------"
 fi;
 
-SCRIPT_DIR=`realpath $(dirname $0)`
-PROJECT_ROOT=`realpath "${SCRIPT_DIR}/../../../../"`
-
 # change to PROJECT_DIR. So we can use the typo3cms commands also on commandline
 echo -e "\n=== switch from script dir (${SCRIPT_DIR}) to TYPO3 root ${PROJECT_ROOT}"
 cd "${PROJECT_ROOT}"
@@ -21,7 +21,7 @@ cd "${PROJECT_ROOT}"
 rm -fr typo3temp/var/Cache/*;
 
 # make sure we do the initial upgrade stuff again
-./typo3cms configuration:remove EXTCONF/helhum-typo3-console/initialUpgradeDone true
+${TYPO3_BIN} configuration:remove EXTCONF/helhum-typo3-console/initialUpgradeDone true
 
 # if db dump file is given as first parameter, reset DB with that dump
 if [ -f "${PROJECT_ROOT}/$1" ]; then
@@ -29,15 +29,15 @@ if [ -f "${PROJECT_ROOT}/$1" ]; then
     echo -e "\n=== resetting database, this can take a while"
 
     echo -e "\n=== resetting database, drop all tables"
-    echo "show tables" | ./typo3cms database:import | grep -v Tables_in | grep -v "+" | awk '{print "drop table " $1 ";"}' | ./typo3cms database:import
+    echo "show tables" | ${TYPO3_BIN} database:import | grep -v Tables_in | grep -v "+" | awk '{print "drop table " $1 ";"}' | ${TYPO3_BIN} database:import
 
-    #zcat ${PROJECT_ROOT}/db_backup_62.sql.gz | ./typo3cms database:import
-    ./typo3cms database:import < "${PROJECT_ROOT}/$1"
+    #zcat ${PROJECT_ROOT}/db_backup_62.sql.gz | ${TYPO3_BIN} database:import
+    ${TYPO3_BIN} database:import < "${PROJECT_ROOT}/$1"
 
     # check if a parameter was given and an run corresponding sql script
     if [ ! -z "$2" ]; then
         echo -e "\n=== modify for local dev machines, if needed"
-        ./typo3cms database:import < "${SCRIPT_DIR}/sql/projectspecific/prepareDev_$2.sql"
+        ${TYPO3_BIN} database:import < "${SCRIPT_DIR}/sql/projectspecific/prepareDev_$2.sql"
     fi;
 
 else
@@ -49,42 +49,42 @@ else
 fi;
 
 # do some basic DB stuff to prevent exceptions
-./typo3cms database:import < "${SCRIPT_DIR}/sql/common/preDbCompare.sql"
+${TYPO3_BIN} database:import < "${SCRIPT_DIR}/sql/common/preDbCompare.sql"
 
 echo -e "\n=== truncate some cache tables"
-./typo3cms database:import < "${SCRIPT_DIR}/sql/common/truncateSomeCacheTables.sql"
+${TYPO3_BIN} database:import < "${SCRIPT_DIR}/sql/common/truncateSomeCacheTables.sql"
 
 echo -e "\n=== reduces sys_log"
-./typo3cms database:import < "${SCRIPT_DIR}/sql/common/reduceSysLog.sql"
+${TYPO3_BIN} database:import < "${SCRIPT_DIR}/sql/common/reduceSysLog.sql"
 
 echo -e "\n=== run DB compare"
-./typo3cms database:updateschema safe
+${TYPO3_BIN} database:updateschema safe
 
-./typo3cms cache:flush
+${TYPO3_BIN} cache:flush
 
 # migration wizards laufen lassen, alle siehe typo3_src/typo3/sysext/install/ext_localconf.php
 echo -e "\n=== run upgrade wizards"
 # to make sure we are running all wizards, even newly added ones, just run all with one command
 # at least with 4.5.3 you need to put this parameter all in one line without space after ,
-./typo3cms upgrade:all \
+${TYPO3_BIN} upgrade:all \
     compatibility6Extension[install]=0,compatibility7Extension[install]=0,rtehtmlareaExtension[install]=0,openidExtension[install]=0,DbalAndAdodbExtractionUpdate[install]=0,formLegacyExtractionUpdate[install]=0,mediaceExtension[install]=0
 
 
 
 # simpler things can be done via sql
 echo -e "\n=== run sql scripts for simpler migration stuff"
-./typo3cms database:import < "${SCRIPT_DIR}/sql/projectspecific/setRights.sql"
+${TYPO3_BIN} database:import < "${SCRIPT_DIR}/sql/projectspecific/setRights.sql"
 
 
 echo -e "\n=== make sure all installed extensions are properly setup"
-./typo3cms extension:setupactive
+${TYPO3_BIN} extension:setupactive
 
 echo -e "\n=== update the reference index"
-./typo3cms cleanup:updatereferenceindex
+${TYPO3_BIN} cleanup:updatereferenceindex
 
 echo -e "\n=== and finally cleanup DB"
 bash ${SCRIPT_DIR}/cleanup.sh
 
 # TODO, activate after all extensions are properly updated and loaded again
 # echo -e "\n=== database:updateschema destructive"
-#./typo3cms database:updateschema --verbose --schema-update-types destructive
+#${TYPO3_BIN} database:updateschema --verbose --schema-update-types destructive
