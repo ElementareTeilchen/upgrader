@@ -4,12 +4,13 @@ Beware:  this is ONLY A BOILERPLATE which needs individual adaptions for each pr
 
 Basically - if you did all the adaptions - you can then just run a bash script to do the complete upgrade.
 
-    bash ./web/typo3conf/ext/upgrader/6to8/migrate.sh dbdump.sql keyForCurrentMachine
+    bash ./web/typo3conf/ext/upgrader/6to8/migrate.sh -d dbdump.sql -s keyForCurrentMachine
     
 Script Parameters:
 
-- Path to your DB dump
-- Key for machine environment (like devFranz): This is used currently in the naming of some sql-command-files to allow different things on different machines.
+-d (relative) path to your DB dump  
+-s Key for machine environment (like devFranz): This is used currently in the naming of some   sql-command-files to allow different things on different machines.  
+-p path to your project root, if you want to bring that in as parameter 
  
 You can use the script to run firstly several times on your dev machine until all looks good, then on the staging maschine, and finally for the live upgrade, where you can be pretty sure that all will work well (and fast).
 
