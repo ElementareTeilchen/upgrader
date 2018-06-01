@@ -1,4 +1,4 @@
-This extension is a boilerplate to organize all necessary upgrade steps to bring TYPO3 Installations from 6.2 to 8.7.
+This extension is a boilerplate to organize all necessary upgrade steps to bring TYPO3 Installations from 6.2 to 8.7. Thanks to Helmut Hummel for his great EXT:typo3_console, which is heavily used here.
 
 Beware:  this is ONLY A BOILERPLATE which needs individual adaptions for each projects.
 
@@ -21,7 +21,7 @@ We welcome pull requests also for this little documentation, if you have questio
 
 ## Is it only useful for upgrading from 6 to 8?
 
-Basically it should also work for 7 to 8, we did not use it for that yet though. So far. In 2018 we are planning to upgrade some projects from 7 to 8 and maybe even to 9. Stay tuned. 
+Basically it should also work for 7 to 8, we work on those currently. Probalby even for upgrades to 9. Stay tuned. 
 
 ## What about upgrading from 4.5?
 
