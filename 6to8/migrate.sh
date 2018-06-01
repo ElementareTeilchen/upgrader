@@ -28,18 +28,15 @@ if [ -f "${PROJECT_ROOT}/$1" ]; then
 
     echo -e "\n=== resetting database, this can take a while"
 
-    echo -e "\n=== resetting database, init local DB"
+    echo -e "\n=== resetting database, drop all tables"
+    echo "show tables" | ./typo3cms database:import | grep -v Tables_in | grep -v "+" | awk '{print "drop table " $1 ";"}' | ./typo3cms database:import
 
-    if [ ! -z "$2" ]; then
-        ./typo3cms database:import < "${SCRIPT_DIR}/sql/projectspecific/initLocalDb_$2.sql"
-    fi;
-
-    echo -e "\n=== resetting database, import old DB (and modify for local dev machines, if needed)"
     #zcat ${PROJECT_ROOT}/db_backup_62.sql.gz | ./typo3cms database:import
     ./typo3cms database:import < "${PROJECT_ROOT}/$1"
 
     # check if a parameter was given and an run corresponding sql script
     if [ ! -z "$2" ]; then
+        echo -e "\n=== modify for local dev machines, if needed"
         ./typo3cms database:import < "${SCRIPT_DIR}/sql/projectspecific/prepareDev_$2.sql"
     fi;
 
