@@ -41,7 +41,7 @@ cd "${PROJECT_ROOT}"
 rm -fr typo3temp/var/Cache/*;
 
 # make sure we do the initial upgrade stuff again
-${TYPO3_BIN} configuration:remove EXTCONF/helhum-typo3-console/initialUpgradeDone true
+${TYPO3_BIN} configuration:remove EXTCONF/helhum-typo3-console/initialUpgradeDone --force
 
 # if db dump file is given as first parameter, reset DB with that dump
 if [ -f "${PROJECT_ROOT}/$dumpFile" ]; then
@@ -87,7 +87,7 @@ echo -e "\n=== run upgrade wizards"
 # to make sure we are running all wizards, even newly added ones, just run all with one command
 # at least with 4.5.3 you need to put this parameter all in one line without space after ,
 ${TYPO3_BIN} upgrade:all \
-    compatibility6Extension[install]=0,compatibility7Extension[install]=0,rtehtmlareaExtension[install]=0,openidExtension[install]=0,DbalAndAdodbExtractionUpdate[install]=0,formLegacyExtractionUpdate[install]=0,mediaceExtension[install]=0
+    --arguments=compatibility6Extension[install]=0,compatibility7Extension[install]=0,rtehtmlareaExtension[install]=0,openidExtension[install]=0,DbalAndAdodbExtractionUpdate[install]=0,formLegacyExtractionUpdate[install]=0,mediaceExtension[install]=0
 
 
 
