@@ -5,12 +5,32 @@ PROJECT_ROOT=`realpath "${SCRIPT_DIR}/../../../../"`
 TYPO3_BIN='${TYPO3_BIN}'
 #TYPO3_BIN='./vendor/bin/typo3cms'
 
-if [ -z "$2" ]; then
+# first get named parameters (only 1 character possible), see https://unix.stackexchange.com/questions/129391/passing-named-arguments-to-shell-scripts
+while getopts ":d:r:s:" opt; do
+  case $opt in
+    d) dumpFile="$OPTARG"
+    ;;
+    r) projectRoot="$OPTARG"
+    ;;
+    s) machineSpecificSql="$OPTARG"
+    ;;
+    \?) echo "option -$OPTARG not given" >&2
+    ;;
+  esac
+done
+
+if [ -z "$machineSpecificSql" ]; then
     echo -e "----------------------------------------------------------------------------------------------"
-    echo -e " MIND: for dev runs you can give a second parameter (matching a filename) to run machine specific sql"
+    echo -e " MIND: for dev runs you can give a second parameter (matching a identifier used in filenames) to run machine specific sql"
     echo -e " like typo3conf/ext/upgrader/6to8/migrate.sh prj7"
-    echo -e " but make sure your sql file is there"
+    echo -e " but make sure your sql file is there. See our sql-file examples"
     echo -e "----------------------------------------------------------------------------------------------"
+fi;
+
+# in case project root is given as parameter (ie. we are called from external script which determined the correct path)
+# we use that one
+if [ ! -z "$projectRoot" ]; then
+    PROJECT_ROOT="$projectRoot"
 fi;
 
 # change to PROJECT_DIR. So we can use the typo3cms commands also on commandline
@@ -24,7 +44,7 @@ rm -fr typo3temp/var/Cache/*;
 ${TYPO3_BIN} configuration:remove EXTCONF/helhum-typo3-console/initialUpgradeDone true
 
 # if db dump file is given as first parameter, reset DB with that dump
-if [ -f "${PROJECT_ROOT}/$1" ]; then
+if [ -f "${PROJECT_ROOT}/$dumpFile" ]; then
 
     echo -e "\n=== resetting database, this can take a while"
 
@@ -32,12 +52,12 @@ if [ -f "${PROJECT_ROOT}/$1" ]; then
     echo "show tables" | ${TYPO3_BIN} database:import | grep -v Tables_in | grep -v "+" | awk '{print "drop table " $1 ";"}' | ${TYPO3_BIN} database:import
 
     #zcat ${PROJECT_ROOT}/db_backup_62.sql.gz | ${TYPO3_BIN} database:import
-    ${TYPO3_BIN} database:import < "${PROJECT_ROOT}/$1"
+    ${TYPO3_BIN} database:import < "${PROJECT_ROOT}/$dumpFile"
 
     # check if a parameter was given and an run corresponding sql script
-    if [ ! -z "$2" ]; then
+    if [ ! -z "$machineSpecificSql" ]; then
         echo -e "\n=== modify for local dev machines, if needed"
-        ${TYPO3_BIN} database:import < "${SCRIPT_DIR}/sql/projectspecific/prepareDev_$2.sql"
+        ${TYPO3_BIN} database:import < "${SCRIPT_DIR}/sql/projectspecific/prepareDev_$machineSpecificSql.sql"
     fi;
 
 else
