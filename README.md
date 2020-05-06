@@ -20,9 +20,11 @@ The Xclasses are there to avoid that the upgrade script dies just because of pro
 
 We welcome pull requests also for this little documentation, if you have questions or experiences you want to share.
 
-## Is it only useful for upgrading from 6 to 8?
+## Which upgrades can be tackles with this extension
 
-Basically it should also work for 7 to 8, we work on those currently. Probalby even for upgrades to 9. Stay tuned. 
+* 6to8: our most tested variant
+* 7to8: worked for some project, very similar to 6to8
+* 8to10: we are working on that and will use it for several projects, stay tuned  
 
 ## What about upgrading from 4.5?
 

@@ -1,7 +1,7 @@
 <?php
 
 $EM_CONF[$_EXTKEY] = array(
-	'title' => 'Collection of Scripts to run Upgrade from 6.2 to 8',
+	'title' => 'Collection of Scripts to run Core Upgrades',
 	'description' => '',
 	'category' => 'be',
 	'author' => 'Franz Kugelmann',
