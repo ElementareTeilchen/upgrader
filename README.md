@@ -20,7 +20,7 @@ The Xclasses are there to avoid that the upgrade script dies just because of pro
 
 We welcome pull requests also for this little documentation, if you have questions or experiences you want to share.
 
-## Which upgrades can be tackles with this extension
+## Which upgrades can be tackled with this extension
 
 * 6to8: our most tested variant
 * 7to8: worked for some project, very similar to 6to8
