@@ -49,7 +49,7 @@ if [ -f "${PROJECT_ROOT}/$dumpFile" ]; then
     echo -e "\n=== resetting database, this can take a while"
 
     echo -e "\n=== resetting database, drop all tables"
-    echo "show tables" | ${TYPO3_BIN} database:import | grep -v Tables_in | grep -v "+" | awk '{print "drop table " $1 ";"}' | ${TYPO3_BIN} database:import
+    echo "show tables" | ${TYPO3_BIN} database:import | grep -v Tables_in | grep -v "+" | awk '{print "SET FOREIGN_KEY_CHECKS = 0;drop table " $1 ";"}' | ${TYPO3_BIN} database:import
 
     #zcat ${PROJECT_ROOT}/db_backup_62.sql.gz | ${TYPO3_BIN} database:import
     ${TYPO3_BIN} database:import < "${PROJECT_ROOT}/$dumpFile"

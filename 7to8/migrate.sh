@@ -55,7 +55,7 @@ ${TYPO3_CONSOLE_BIN} configuration:remove EXTCONF/helhum-typo3-console/initialUp
 # if valid path to db dump is given, initialize DB with this dump
 if [ -f "${PROJECT_ROOT}/$dumpFile" ]; then
     echo -e "* resetting database, drop all tables"
-    echo "show tables" | ${TYPO3_CONSOLE_BIN} database:import | grep -v Tables_in | grep -v "+" | awk '{print "drop table " $1 ";"}' | ${TYPO3_CONSOLE_BIN} database:import
+    echo "show tables" | ${TYPO3_CONSOLE_BIN} database:import | grep -v Tables_in | grep -v "+" | awk '{print "SET FOREIGN_KEY_CHECKS = 0;drop table " $1 ";"}' | ${TYPO3_CONSOLE_BIN} database:import
 
     echo -e "* resetting database, import old DB, this can take a while (and modify for local dev machines, if needed)"
     ${TYPO3_CONSOLE_BIN} database:import < "${PROJECT_ROOT}/$dumpFile"
