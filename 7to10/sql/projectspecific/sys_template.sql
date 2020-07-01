@@ -1,0 +1,2 @@
+-- fill in whatever you need for your project
+-- update sys_template set include_static_file='EXT:fluid_styled_content/Configuration/TypoScript/,EXT:fluid_styled_content/Configuration/TypoScript/Styling/,EXT:bootstrap_package/Configuration/TypoScript,EXT:bootstrap_package/Configuration/TypoScript/ContentElement' where pid=39;

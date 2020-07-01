@@ -14,6 +14,8 @@
         }
     },
     "require": {
-        "ichhabrecht/core-upgrader": "dev-master"
+        "typo3/cms-core": "^8.7",
+        "php": ">=7.0.0",
+        "helhum/typo3-console": "^5.3"
     }
 }
