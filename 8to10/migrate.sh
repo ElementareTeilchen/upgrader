@@ -127,7 +127,8 @@ ${TYPO3_CONSOLE_BIN} configuration:set SYS/features/fluidBasedPageModule true
 #${TYPO3_CONSOLE_BIN} configuration:set FE/cHashExcludedParameters "L, pk_campaign, pk_kwd, utm_source, utm_medium, utm_campaign, utm_term, utm_content,tx_news_pi1[overwriteDemand][categories]"
 
 # you might need to fix some glitches before running the wizards
-#${TYPO3_CONSOLE_BIN} database:import < "${SCRIPT_DIR}/sql/projectspecific/contentElementsPreWizard.sql"
+#echo -e "* fix some glitches before running the wizards"
+#${TYPO3_CONSOLE_BIN} database:import < "${SCRIPT_DIR}/sql/projectspecific/preWizard.sql"
 
 echo -e "* run upgrade wizards - core"
 ${TYPO3_CONSOLE_BIN} coreupgrader:upgrade
@@ -151,6 +152,8 @@ echo -e "** fill your extensions here"
 echo -e "* run sql scripts for simpler migration stuff"
 echo -e "** run: sys_template.sql"
 ${TYPO3_CONSOLE_BIN} database:import < "${SCRIPT_DIR}/sql/projectspecific/sys_template.sql"
+#echo -e "** run: youNameIt.sql"
+#${TYPO3_CONSOLE_BIN} database:import < "${SCRIPT_DIR}/sql/projectspecific/youNameIt.sql"
 
 echo -e "* alter all remaining myisam -> innodb"
 echo "show table status where Engine='MyISAM';" | ${TYPO3_CONSOLE_BIN} database:import | awk 'NR>1 {print "ALTER TABLE "$1" ENGINE = InnoDB;"}' | ${TYPO3_CONSOLE_BIN} database:import
@@ -158,7 +161,7 @@ echo "show table status where Engine='MyISAM';" | ${TYPO3_CONSOLE_BIN} database:
 echo -e "* check if a wizard is still missing - add it to the script a few lines above"
 ${TYPO3_CONSOLE_BIN} upgrade:list
 
-echo -e "* uninstall EXT:upgrader"
+echo -e "* uninstall upgrader"
 ${TYPO3_CORE_BIN} extension:deactivate -q upgrader
 ${TYPO3_CORE_BIN} extension:deactivate -q core_upgrader
 

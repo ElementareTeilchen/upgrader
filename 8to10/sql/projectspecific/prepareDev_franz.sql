@@ -1,0 +1,2 @@
+-- here you can add stuff, which does only make sense for your certain environment/machine
+-- see README how to trigger it, look for "keyForCurrentMachine"

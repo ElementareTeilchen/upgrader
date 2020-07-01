@@ -22,12 +22,13 @@ The Xclasses are there to avoid that the upgrade script dies just because of pro
 We welcome pull requests also for this little documentation, if you have questions or experiences you want to share.
 
 ## Which upgrades can be tackled with this extension
-The current version is optimized for upgrades to v10. If you want to run an upgrade to v8, you will probably need to swap in composer_v8.json. Also check ext_localconf.php if you want to activate stuff there.
+The current version is optimized for upgrades to v10. We now are using EXT:core_upgrader which was developed by @IchHabRecht for us and you.  
+If you want to run an upgrade to v8, you will probably need to swap in composer_v8.json. Also check ext_localconf.php if you want to activate stuff there.
 
 * 6to8: our most tested variant
 * 7to8: worked for some project, very similar to 6to8
-* 7to10: already used for some projects, using EXT:core_upgrader which was developed by @IchHabRecht for us
-* 8to10: we are working on that and will use it for several projects, stay tuned  
+* 7to10: already used for some projects
+* 8to10: already in use for some projects
 
 ## What about upgrading from 4.5?
 
