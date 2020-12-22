@@ -1,4 +1,6 @@
 #!/bin/bash
+# stop script run when error occurs
+set -e
 
 SCRIPT_DIR=`realpath $(dirname $0)`
 # depending on where you have your local extensions, you need to adapt the path here
