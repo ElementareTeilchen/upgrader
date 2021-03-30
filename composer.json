@@ -1,19 +1,24 @@
 {
-    "name": "elementareteilchen/upgrader",
-    "type": "typo3-cms-extension",
-    "license": "GPL-2.0+",
-    "authors": [
-        {
-            "name": "Franz Kugelmann",
-            "email": "franz.kugelmann@elementare-teilchen.de"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "ElementareTeilchen\\Upgrader\\": "Classes"
-        }
-    },
-    "require": {
-        "ichhabrecht/core-upgrader": "^1.3"
+  "name": "elementareteilchen/upgrader",
+  "type": "typo3-cms-extension",
+  "license": "GPL-2.0+",
+  "authors": [
+    {
+      "name": "Franz Kugelmann",
+      "email": "franz.kugelmann@elementare-teilchen.de"
     }
+  ],
+  "extra": {
+    "typo3/cms": {
+      "extension-key": "upgrader"
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "ElementareTeilchen\\Upgrader\\": "Classes"
+    }
+  },
+  "require": {
+    "ichhabrecht/core-upgrader": "^1.3"
+  }
 }
