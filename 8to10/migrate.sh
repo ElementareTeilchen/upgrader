@@ -145,6 +145,8 @@ ${TYPO3_CONSOLE_BIN} upgrade:run backendUsersConfiguration --no-interaction --co
 # this wizard is only informing - doing nothing
 ${TYPO3_CONSOLE_BIN} upgrade:run argon2iPasswordHashes --no-interaction --confirm all
 ${TYPO3_CONSOLE_BIN} upgrade:run databaseRowsUpdateWizard --no-interaction --confirm all
+${TYPO3_CONSOLE_BIN} upgrade:run dbalAndAdodbExtraction --no-interaction --deny all
+${TYPO3_CONSOLE_BIN} upgrade:run svgFilesSanitization --no-interaction --confirm all
 
 echo -e "* run upgrade wizards - extensions"
 echo -e "** fill your extensions here"
