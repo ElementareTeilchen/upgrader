@@ -24,7 +24,7 @@ $boot = function () {
     $GLOBALS['TYPO3_CONF_VARS']['LOG']['TYPO3']['CMS']['Install']['Updates']['writerConfiguration'] = array(
         \TYPO3\CMS\Core\Log\LogLevel::INFO => array(
             'TYPO3\\CMS\\Core\\Log\\Writer\\FileWriter' => array(
-                'logFile' => 'typo3temp/var/logs/upgradeWizards.log'
+                'logFile' => \TYPO3\CMS\Core\Core\Environment::getVarPath() .'/log/upgradeWizards.log'
             )
         )
     );
