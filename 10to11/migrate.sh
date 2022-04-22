@@ -9,7 +9,6 @@ SCRIPT_DIR=`realpath $(dirname $0)`
 # this might be overwritten in call from upgrade scripts on online runs
 PROJECT_ROOT=`realpath "${SCRIPT_DIR}/../../../"`
 TYPO3_CONSOLE_BIN='./vendor/bin/typo3cms'
-TYPO3_CORE_BIN='./vendor/bin/typo3'
 
 # first get named parameters (only 1 character possible), see https://unix.stackexchange.com/questions/129391/passing-named-arguments-to-shell-scripts
 while getopts ":d:r:s:" opt; do
@@ -25,21 +24,15 @@ while getopts ":d:r:s:" opt; do
   esac
 done
 
-
 # in case project root is given as parameter (ie. we are called from external script which determined the correct path)
 # we use that one
 if [ ! -z "$projectRoot" ]; then
     PROJECT_ROOT="$projectRoot"
 fi;
 
-
 # change to PROJECT_DIR. So we can use the typo3cms commands also on commandline
 echo -e "* switch to TYPO3 root"
 cd "${PROJECT_ROOT}"
-
-# first flush cache hardcoded
-#echo -e "* rm -fr var/cache/*;"
-#rm -fr var/cache/*;
 
 # if valid path to db dump is given, initialize DB with this dump
 if [ -f "${PROJECT_ROOT}/$dumpFile" ]; then
@@ -57,8 +50,8 @@ else
     echo -e "* use existing database for this migration, since no dump file is given as parameter"
 fi;
 
-# need to fix stuff in DB for most typo3cms commands to run properly
-echo -e "* fix blocking DB issues, delete some old data"
+# we might need to fix stuff in DB for typo3cms commands to run properly
+echo -e "* fix blocking DB issues"
 ${TYPO3_CONSOLE_BIN} database:import < "${SCRIPT_DIR}/sql/common/preUpgradeRun.sql"
 
 echo -e "* drop obsolete cache tables starting with cf_"
@@ -81,26 +74,18 @@ echo -e "* flush cache"
 ${TYPO3_CONSOLE_BIN} -q cache:flush
 
 echo -e "* set wanted stuff in LocalConfiguration.php"
-${TYPO3_CONSOLE_BIN} configuration:set SYS/features/fluidBasedPageModule true
+${TYPO3_CONSOLE_BIN} configuration:set SYS/features/yamlImportsFollowDeclarationOrder true
 
 # you might need to fix some glitches before running the wizards
-#echo -e "* fix some glitches before running the wizards"
-#${TYPO3_CONSOLE_BIN} database:import < "${SCRIPT_DIR}/sql/projectspecific/preWizard.sql"
+echo -e "* fix some glitches before running the wizards"
+${TYPO3_CONSOLE_BIN} database:import < "${SCRIPT_DIR}/sql/projectspecific/preWizard.sql"
 
 echo -e "* run upgrade wizards - core"
-${TYPO3_CONSOLE_BIN} -vvv coreupgrader:upgrade
+${TYPO3_CONSOLE_BIN} upgrade:prepare
+${TYPO3_CONSOLE_BIN} upgrade:run all --confirm all --deny feedit --deny taskcenter --deny sys_action
 
 echo -e "* re-run upgrade wizards which need confirmations"
-#${TYPO3_CONSOLE_BIN} upgrade:run separateSysHistoryFromLog --no-interaction --confirm all
-#${TYPO3_CONSOLE_BIN} upgrade:run cshmanualBackendUsers --no-interaction --confirm all
-#${TYPO3_CONSOLE_BIN} upgrade:run pagesLanguageOverlay --no-interaction --confirm all
-#${TYPO3_CONSOLE_BIN} upgrade:run pagesLanguageOverlayBeGroupsAccessRights --no-interaction --confirm all
-#${TYPO3_CONSOLE_BIN} upgrade:run backendUsersConfiguration --no-interaction --confirm all
-## this wizard is only informing - doing nothing
-#${TYPO3_CONSOLE_BIN} upgrade:run argon2iPasswordHashes --no-interaction --confirm all
-#${TYPO3_CONSOLE_BIN} upgrade:run databaseRowsUpdateWizard --no-interaction --confirm all
-#${TYPO3_CONSOLE_BIN} upgrade:run dbalAndAdodbExtraction --no-interaction --deny all
-${TYPO3_CONSOLE_BIN} upgrade:run svgFilesSanitization --no-interaction --confirm all
+#${TYPO3_CONSOLE_BIN} upgrade:run svgFilesSanitization --no-interaction --confirm all
 
 echo -e "* run upgrade wizards - extensions"
 echo -e "** fill your extensions here"
@@ -120,14 +105,10 @@ echo -e "* check if a wizard is still missing - add it to the script a few lines
 ${TYPO3_CONSOLE_BIN} upgrade:list
 
 echo -e "* update language packs"
-${TYPO3_CORE_BIN} language:update
-
-echo -e "* uninstall upgrader"
-${TYPO3_CORE_BIN} extension:deactivate -q upgrader
-${TYPO3_CORE_BIN} extension:deactivate -q core_upgrader
+${TYPO3_CONSOLE_BIN} language:update
 
 #echo -e "* temporarily add admin user in case online users are unknown or not available locally"
-#${TYPO3_CORE_BIN} backend:createadmin admin your..fancy..pwd
+#${TYPO3_CONSOLE_BIN} backend:createadmin admin your..fancy..pwd
 
 #echo -e "* exit for now, we suggest to run full script as soon as all extensions are ready and you start with the final iterations"
 #exit;

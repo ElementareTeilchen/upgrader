@@ -1,0 +1,4 @@
+-- if we have utf8-mb4, we get sql error because index gets too long. The queries would be executed in the wrong order by DB compare
+-- alter table `sys_refindex` drop index lookup_string;
+-- ALTER TABLE sys_refindex CHANGE ref_string `ref_string` VARCHAR(1024) DEFAULT '' NOT NULL;
+-- CREATE INDEX `lookup_string` ON sys_refindex (ref_string(255));

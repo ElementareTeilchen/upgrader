@@ -19,6 +19,6 @@
     }
   },
   "require": {
-    "ichhabrecht/core-upgrader": "^1.3"
+    "helhum/typo3-console": "^7.1.1"
   }
 }
