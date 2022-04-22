@@ -6,10 +6,10 @@ Basically - if you did all the adaptions - you can then just run a bash script t
 Since TYPO3 11 we also use versioning and keep only stuff for the latest LTS version. Check out release v10.0.0 to get all boilerplates for older TYPO3-Versions.
 We suggest to use ddev for local development.
 ```
-    # with ddev
-    ddev exec bash packages/upgrader/10to11/migrate.sh -dump11.sql
-    # regular console
-    bash packages/upgrader/10to11/migrate.sh -dump11.sql            
+# with ddev
+ddev exec bash packages/upgrader/10to11/migrate.sh -dump11.sql
+# regular console
+bash packages/upgrader/10to11/migrate.sh -dump11.sql            
 ```
 Script Parameters:
 
@@ -24,13 +24,13 @@ You can use the script to run firstly several times on your dev machine until al
 We welcome pull requests also for this little documentation, if you have questions or experiences you want to share.
 
 ## Which upgrades can be tackled with this extension
-* TYPO3 10LTS
+* TYPO3 10LTS  
 We are using EXT:core_upgrader which was developed by @IchHabRecht for us and you.  
-* TYPO3 11LTS
+* TYPO3 11LTS  
 We removed all outdated stuff to keep the boilerplate lean and simple. Also TYPO3 Upgrade Wizards got better, less to do for us! 
 
 ## How is the best procedure for organizing an upgrade with this extension
-Check out https://docs.typo3.org/m/typo3/guide-installation/11.5/en-us/Major/Index.html
+Check out https://docs.typo3.org/m/typo3/guide-installation/11.5/en-us/Major/Index.html  
 We aim to run all steps mentioned there in a single script run when going live.
 
 Since we try to tackle also upgrades with more than one version up, here is how we suggest to do:  
