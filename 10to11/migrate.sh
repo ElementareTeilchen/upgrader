@@ -9,9 +9,10 @@ SCRIPT_DIR=`realpath $(dirname $0)`
 # this might be overwritten in call from upgrade scripts on online runs
 PROJECT_ROOT=`realpath "${SCRIPT_DIR}/../../../"`
 TYPO3_CONSOLE_BIN='./vendor/bin/typo3cms'
+COMPOSER_BIN='composer'
 
 # first get named parameters (only 1 character possible), see https://unix.stackexchange.com/questions/129391/passing-named-arguments-to-shell-scripts
-while getopts ":d:r:s:" opt; do
+while getopts ":d:r:s:p:c:" opt; do
   case $opt in
     d) dumpFile="$OPTARG"
     ;;
@@ -19,10 +20,22 @@ while getopts ":d:r:s:" opt; do
     ;;
     s) machineSpecificSql="$OPTARG"
     ;;
+    p) phpPath="$OPTARG"
+    ;;
+    c) composerPath="$OPTARG"
+    ;;
     \?) echo "option -$OPTARG not given" >&2
     ;;
   esac
 done
+
+if [ ! -z "$phpPath" ]; then
+    TYPO3_CONSOLE_BIN="${phpPath} ./vendor/bin/typo3cms"
+fi;
+
+if [ ! -z "$composerPath" ]; then
+    COMPOSER_BIN="$composerPath"
+fi;
 
 # in case project root is given as parameter (ie. we are called from external script which determined the correct path)
 # we use that one
@@ -68,7 +81,7 @@ echo -e "* run DB compare"
 ${TYPO3_CONSOLE_BIN} database:updateschema "safe"
 
 echo -e "* dumpautoload"
-composer dumpautoload;
+${COMPOSER_BIN} dumpautoload;
 
 echo -e "* flush cache"
 ${TYPO3_CONSOLE_BIN} -q cache:flush

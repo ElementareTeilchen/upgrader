@@ -15,7 +15,9 @@ Script Parameters:
 
 -d (relative) path to your DB dump  
 -s Key for machine environment (like devFranz): This is used currently in the naming of some sql-command-files to allow different things on different machines. Rarely needed nowadays.  
--p path to your project root, if you want to bring that in as parameter from another script
+-r path to your project root, if you want to bring that in as parameter from another script
+-p path to php bin which should be used to call eg typo3 console
+-c path to composer if composer is not available just calling `composer`
  
 You can use the script to run firstly several times on your dev machine until all looks good, then on the staging machine, and finally for the live upgrade, where you can be pretty sure that all will work well (and fast).
 
