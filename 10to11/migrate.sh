@@ -7,9 +7,9 @@ SCRIPT_DIR=`realpath $(dirname $0)`
 # this is working out of the box, if you follow
 # https://docs.typo3.org/m/typo3/guide-installation/master/en-us/MigrateToComposer/BestPractices.html
 # this might be overwritten in call from upgrade scripts on online runs
-PROJECT_ROOT=`realpath "${SCRIPT_DIR}/../../../"`
-TYPO3_CONSOLE_BIN='./vendor/bin/typo3cms'
-COMPOSER_BIN='composer'
+projectRoot=`realpath "${SCRIPT_DIR}/../../../"`
+phpBin=''
+composerBin='composer'
 
 # first get named parameters (only 1 character possible), see https://unix.stackexchange.com/questions/129391/passing-named-arguments-to-shell-scripts
 while getopts ":d:r:s:p:c:" opt; do
@@ -20,28 +20,19 @@ while getopts ":d:r:s:p:c:" opt; do
     ;;
     s) machineSpecificSql="$OPTARG"
     ;;
-    p) phpPath="$OPTARG"
+    p) phpBin="$OPTARG"
     ;;
-    c) composerPath="$OPTARG"
+    c) composerBin="$OPTARG"
     ;;
     \?) echo "option -$OPTARG not given" >&2
     ;;
   esac
 done
 
-if [ ! -z "$phpPath" ]; then
-    TYPO3_CONSOLE_BIN="${phpPath} ./vendor/bin/typo3cms"
-fi;
-
-if [ ! -z "$composerPath" ]; then
-    COMPOSER_BIN="$composerPath"
-fi;
-
-# in case project root is given as parameter (ie. we are called from external script which determined the correct path)
-# we use that one
-if [ ! -z "$projectRoot" ]; then
-    PROJECT_ROOT="$projectRoot"
-fi;
+# now use default values or given parameter
+PROJECT_ROOT="${projectRoot}"
+TYPO3_CONSOLE_BIN="${phpBin} ./vendor/bin/typo3cms"
+COMPOSER_BIN="${phpBin} ${composerBin}"
 
 # change to PROJECT_DIR. So we can use the typo3cms commands also on commandline
 echo -e "* switch to TYPO3 root"

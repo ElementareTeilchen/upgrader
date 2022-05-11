@@ -7,9 +7,10 @@ Since TYPO3 11 we also use versioning and keep only stuff for the latest LTS ver
 We suggest to use ddev for local development.
 ```
 # with ddev
-ddev exec bash packages/upgrader/10to11/migrate.sh -dump11.sql
+ddev exec bash packages/upgrader/10to11/migrate.sh -d 'dump11.sql'
 # regular console
-bash packages/upgrader/10to11/migrate.sh -dump11.sql            
+bash packages/upgrader/10to11/migrate.sh -d 'dump11.sql'
+bash packages/upgrader/10to11/migrate.sh -d 'dump-for-migration.sql' -p /usr/bin/php74 -c '/usr/bin/composer'
 ```
 Script Parameters:
 
