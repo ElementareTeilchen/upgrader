@@ -2,12 +2,12 @@
 # stop script run when error occurs
 set -e
 
-SCRIPT_DIR=`realpath $(dirname $0)`
+SCRIPT_DIR="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 # depending on where you have your local extensions, you need to adapt the path here
 # this is working out of the box, if you follow
 # https://docs.typo3.org/m/typo3/guide-installation/master/en-us/MigrateToComposer/BestPractices.html
 # this might be overwritten in call from upgrade scripts on online runs
-projectRoot=`realpath "${SCRIPT_DIR}/../../../"`
+PROJECT_ROOT=`readlink -f "${SCRIPT_DIR}/../../../"`
 phpBin=''
 composerBin='composer'
 

@@ -2,11 +2,11 @@
 
 # use beginning with 8LTS, see typo3_src/typo3/sysext/lowlevel/README.rst
 
-SCRIPT_DIR=`realpath $(dirname $0)`
+SCRIPT_DIR="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 # depending on where you have your local extensions, you need to adapt the path here
 # this is working out of the box, if you follow
 # https://docs.typo3.org/m/typo3/guide-installation/master/en-us/MigrateToComposer/BestPractices.html
-PROJECT_ROOT=`realpath "${SCRIPT_DIR}/../../../"`
+PROJECT_ROOT=`readlink -f "${SCRIPT_DIR}/../../../"`
 TYPO3_CORE_BIN='./vendor/bin/typo3'
 
 echo -e '* start cleanup in ${PROJECT_ROOT}'
