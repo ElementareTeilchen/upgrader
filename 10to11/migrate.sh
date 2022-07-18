@@ -7,7 +7,7 @@ SCRIPT_DIR="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 # this is working out of the box, if you follow
 # https://docs.typo3.org/m/typo3/guide-installation/master/en-us/MigrateToComposer/BestPractices.html
 # this might be overwritten in call from upgrade scripts on online runs
-PROJECT_ROOT=`readlink -f "${SCRIPT_DIR}/../../../"`
+projectRoot=`readlink -f "${SCRIPT_DIR}/../../../"`
 phpBin=''
 composerBin='composer'
 
