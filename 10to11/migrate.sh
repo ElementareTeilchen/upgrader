@@ -1,6 +1,6 @@
 #!/bin/bash
 # stop script run when error occurs
-set -e
+set -euo pipefail
 
 SCRIPT_DIR="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 # depending on where you have your local extensions, you need to adapt the path here
@@ -10,6 +10,7 @@ SCRIPT_DIR="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 projectRoot=`readlink -f "${SCRIPT_DIR}/../../../"`
 phpBin=''
 composerBin='composer'
+machineSpecificSql=''
 
 # first get named parameters (only 1 character possible), see https://unix.stackexchange.com/questions/129391/passing-named-arguments-to-shell-scripts
 while getopts ":d:r:s:p:c:" opt; do

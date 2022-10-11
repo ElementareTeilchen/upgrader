@@ -1,4 +1,6 @@
 #!/bin/bash
+# stop script run when error occurs
+set -euo pipefail
 
 # use beginning with 8LTS, see typo3_src/typo3/sysext/lowlevel/README.rst
 
