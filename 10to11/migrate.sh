@@ -1,6 +1,7 @@
 #!/bin/bash
-# stop script run when error occurs
-set -euo pipefail
+# stop script run when main errors occur
+#set -euo pipefail
+set -e
 
 SCRIPT_DIR="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 # depending on where you have your local extensions, you need to adapt the path here
