@@ -6,3 +6,6 @@
 -- there should not be pages in default language having l10n_parent set
 -- might break i.e. sitemap rendering
 update pages set l10n_parent = 0  where sys_language_uid = 0;
+
+-- in case you have updated news from an older version and get an error like "Data truncated for column 'related_links' at row xxx"
+-- UPDATE tx_news_domain_model_news SET related_links=0 WHERE related_links IS NULL;
