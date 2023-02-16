@@ -1,5 +1,5 @@
 <?php
-defined('TYPO3_MODE') or die();
+defined('TYPO3') or die();
 
 $boot = function () {
     // configure the TYPO3 logger to log wizards stuff to a special logfile
