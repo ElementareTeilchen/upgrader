@@ -78,6 +78,10 @@ ${COMPOSER_BIN} dumpautoload;
 
 echo -e "* flush cache"
 ${TYPO3_CONSOLE_BIN} -q cache:flush
+${TYPO3_CONSOLE_BIN} -q cache:warmup
+
+echo -e "* setup all existing extensions"
+${TYPO3_CONSOLE_BIN} extension:setup
 
 echo -e "* set wanted stuff in LocalConfiguration.php"
 ${TYPO3_CONSOLE_BIN} configuration:set SYS/features/yamlImportsFollowDeclarationOrder true
@@ -88,7 +92,7 @@ ${TYPO3_CONSOLE_BIN} database:import < "${SCRIPT_DIR}/sql/projectspecific/preWiz
 
 echo -e "* run upgrade wizards - core"
 ${TYPO3_CONSOLE_BIN} upgrade:prepare
-${TYPO3_CONSOLE_BIN} upgrade:run all --confirm all --deny feedit --deny taskcenter --deny sys_action
+${TYPO3_CONSOLE_BIN} upgrade:run all
 
 echo -e "* re-run upgrade wizards which need confirmations"
 #${TYPO3_CONSOLE_BIN} upgrade:run svgFilesSanitization --no-interaction --confirm all
