@@ -19,6 +19,6 @@
     }
   },
   "require": {
-    "helhum/typo3-console": "*"
+    "helhum/typo3-console": "^8.0.3"
   }
 }

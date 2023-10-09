@@ -1,6 +1,5 @@
 #!/bin/bash
-# stop script run when main errors occur
-#set -euo pipefail
+# stop script run when error occurs
 set -e
 
 SCRIPT_DIR="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
@@ -11,7 +10,7 @@ SCRIPT_DIR="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 projectRoot=`readlink -f "${SCRIPT_DIR}/../../../"`
 phpBin=''
 composerBin='composer'
-machineSpecificSql=''
+
 
 # first get named parameters (only 1 character possible), see https://unix.stackexchange.com/questions/129391/passing-named-arguments-to-shell-scripts
 while getopts ":d:r:s:p:c:" opt; do
@@ -19,8 +18,6 @@ while getopts ":d:r:s:p:c:" opt; do
     d) dumpFile="$OPTARG"
     ;;
     r) projectRoot="$OPTARG"
-    ;;
-    s) machineSpecificSql="$OPTARG"
     ;;
     p) phpBin="$OPTARG"
     ;;
@@ -33,10 +30,10 @@ done
 
 # now use default values or given parameter
 PROJECT_ROOT="${projectRoot}"
-TYPO3_CONSOLE_BIN="${phpBin} ./vendor/bin/typo3cms"
+TYPO3_CONSOLE_BIN="${phpBin} ./vendor/bin/typo3"
 COMPOSER_BIN="${phpBin} ${composerBin}"
 
-# change to PROJECT_DIR. So we can use the typo3cms commands also on commandline
+# change to PROJECT_DIR to have the same commands here as you would use manually on command line
 echo -e "* switch to TYPO3 root"
 cd "${PROJECT_ROOT}"
 
@@ -46,17 +43,11 @@ if [ -f "${PROJECT_ROOT}/$dumpFile" ]; then
     echo "show tables" | ${TYPO3_CONSOLE_BIN} database:import | grep -v Tables_in | grep -v "+" | awk '{print "SET FOREIGN_KEY_CHECKS = 0;drop table " $1 ";"}' | ${TYPO3_CONSOLE_BIN} database:import
     echo -e "* resetting database, import old DB, this can take a while (and modify for local dev machines, if needed)"
     ${TYPO3_CONSOLE_BIN} database:import < "${PROJECT_ROOT}/$dumpFile"
-
-    # check if the parameter was given to run the specific local sql script
-    if [ ! -z "$machineSpecificSql" ]; then
-        ${TYPO3_CONSOLE_BIN} database:import < "${SCRIPT_DIR}/sql/projectspecific/prepareDev_$machineSpecificSql.sql"
-    fi;
-
 else
     echo -e "* use existing database for this migration, since no dump file is given as parameter"
 fi;
 
-# we might need to fix stuff in DB for typo3cms commands to run properly
+# we might need to fix stuff in DB for commands to run properly
 echo -e "* fix blocking DB issues"
 ${TYPO3_CONSOLE_BIN} database:import < "${SCRIPT_DIR}/sql/common/preUpgradeRun.sql"
 
@@ -70,38 +61,29 @@ ${TYPO3_CONSOLE_BIN} configuration:remove EXTCONF/helhum-typo3-console/initialUp
 echo -e "* reduces sys_log"
 ${TYPO3_CONSOLE_BIN} database:import < "${SCRIPT_DIR}/sql/common/reduceSysLog.sql"
 
-echo -e "* run DB compare"
-${TYPO3_CONSOLE_BIN} database:updateschema "safe"
-
-echo -e "* dumpautoload"
-${COMPOSER_BIN} dumpautoload;
-
-echo -e "* flush cache"
-${TYPO3_CONSOLE_BIN} -q cache:flush
-${TYPO3_CONSOLE_BIN} -q cache:warmup
-
 echo -e "* setup all existing extensions"
 ${TYPO3_CONSOLE_BIN} extension:setup
 
-echo -e "* set wanted stuff in LocalConfiguration.php"
-${TYPO3_CONSOLE_BIN} configuration:set SYS/features/yamlImportsFollowDeclarationOrder true
+echo -e "* flush/warmup cache"
+${TYPO3_CONSOLE_BIN} -q cache:flush
+${TYPO3_CONSOLE_BIN} -q cache:warmup
 
 # you might need to fix some glitches before running the wizards
 echo -e "* fix some glitches before running the wizards"
 ${TYPO3_CONSOLE_BIN} database:import < "${SCRIPT_DIR}/sql/projectspecific/preWizard.sql"
 
 echo -e "* run upgrade wizards - core"
-${TYPO3_CONSOLE_BIN} upgrade:prepare
-${TYPO3_CONSOLE_BIN} upgrade:run all
+${TYPO3_CONSOLE_BIN} upgrade:run
 
-echo -e "* re-run upgrade wizards which need confirmations"
-#${TYPO3_CONSOLE_BIN} upgrade:run svgFilesSanitization --no-interaction --confirm all
+# in case you want to avoid needing to interact as much as possible when running the script, try this instead of the previous line
+#${TYPO3_CONSOLE_BIN} upgrade:run --no-interaction
+#echo -e "* re-run upgrade wizards which need confirmations - if you want them to run"
+#${TYPO3_CONSOLE_BIN} upgrade:run svgFilesSanitization
 
 echo -e "* run upgrade wizards - extensions"
-echo -e "** fill your extensions here"
+echo -e "** TODO: fill your extensions here"
 
-
-# simpler things can be done via sql
+# simpler things can be done via sql - the names of the files don't matter, just make sure the path is correct
 echo -e "* run sql scripts for simpler migration stuff"
 echo -e "** run: sys_template.sql"
 ${TYPO3_CONSOLE_BIN} database:import < "${SCRIPT_DIR}/sql/projectspecific/sys_template.sql"
@@ -109,7 +91,7 @@ ${TYPO3_CONSOLE_BIN} database:import < "${SCRIPT_DIR}/sql/projectspecific/sys_te
 #${TYPO3_CONSOLE_BIN} database:import < "${SCRIPT_DIR}/sql/projectspecific/youNameIt.sql"
 
 echo -e "* alter all remaining myisam -> innodb"
-echo "show table status where Engine='MyISAM';" | ${TYPO3_CONSOLE_BIN} database:import | awk 'NR>1 {print "ALTER TABLE "$1" ENGINE = InnoDB;"}' | ${TYPO3_CONSOLE_BIN} database:import
+echo "show table status where Engine='MyISAM';" | ${TYPO3_CONSOLE_BIN} database:import | awk '{print "ALTER TABLE "$1" ENGINE = InnoDB;"}' | ${TYPO3_CONSOLE_BIN} database:import
 
 echo -e "* check if a wizard is still missing - add it to the script a few lines above"
 ${TYPO3_CONSOLE_BIN} upgrade:list
@@ -120,10 +102,10 @@ ${TYPO3_CONSOLE_BIN} language:update
 #echo -e "* temporarily add admin user in case online users are unknown or not available locally"
 #${TYPO3_CONSOLE_BIN} backend:createadmin admin your..fancy..pwd
 
-#echo -e "* exit for now, we suggest to run full script as soon as all extensions are ready and you start with the final iterations"
-#exit;
+echo -e "* exit for now, we suggest to run full script as soon as all extensions are ready and you start with the final iterations"
+exit;
 
-# activate only if we are pretty sure all is fine (after several successful migrations)
+# activate only if you are pretty sure all is fine (after several successful migration runs)
 echo -e "* database:updateschema destructive"
 # first time rename to zzz_deleted
 ${TYPO3_CONSOLE_BIN} database:updateschema "destructive"
