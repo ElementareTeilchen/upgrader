@@ -16,3 +16,7 @@ WHERE t1.temp > t2.temp
   AND t1.tablenames = t2.tablenames
   AND t1.fieldname = t2.fieldname;
 ALTER TABLE sys_category_record_mm DROP COLUMN temp;
+
+-- remove zombie records, which where not found by cleanup commands
+select concat ('sys_file_metadata zombies, will be removed: ', count(*)) FROM sys_file_metadata WHERE file not in (select uid from sys_file);
+delete FROM sys_file_metadata WHERE file not in (select uid from sys_file);
