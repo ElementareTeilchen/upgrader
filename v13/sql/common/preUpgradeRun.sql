@@ -7,6 +7,11 @@
 -- might break i.e. sitemap rendering
 update pages set l10n_parent = 0  where sys_language_uid = 0;
 
+-- in case you have no reason these two fields should differ, make them identical, this avoids issues in the backend in language compare mode
+-- find / test with
+-- SELECT trans.uid,trans.pid,trans.sys_language_uid,trans.title,trans.l10n_source,trans.l10n_parent FROM pages trans inner join pages orig on trans.l10n_parent=orig.uid WHERE trans.deleted=0 and trans.hidden=0 and orig.deleted=0 and orig.hidden=0 and trans.l10n_source != trans.l10n_parent;
+-- update pages set l10n_source = l10n_parent where sys_language_uid > 0 and l10n_source != l10n_parent;
+
 -- remove useless duplicates to allow DB compare to create new indexes
 ALTER TABLE sys_category_record_mm ADD COLUMN temp SERIAL;
 DELETE t1 FROM sys_category_record_mm t1, sys_category_record_mm t2
