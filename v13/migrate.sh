@@ -61,6 +61,9 @@ ${TYPO3_CONSOLE_BIN} configuration:remove EXTCONF/helhum-typo3-console/initialUp
 echo -e "* reduces sys_log"
 ${TYPO3_CONSOLE_BIN} database:import < "${SCRIPT_DIR}/sql/common/reduceSysLog.sql"
 
+echo -e "* run common cleanup queries"
+${TYPO3_CONSOLE_BIN} database:import < "${SCRIPT_DIR}/sql/common/cleanup.sql"
+
 echo -e "* setup all existing extensions"
 ${TYPO3_CONSOLE_BIN} extension:setup
 
