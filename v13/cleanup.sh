@@ -10,6 +10,10 @@ TYPO3_CONSOLE_BIN='./vendor/bin/typo3'
 echo -e "* start cleanup in ${PROJECT_ROOT}"
 
 date +"%d.%m.%Y %T"
+echo -e '* typo3 cleanup:localprocessedfiles -f'
+${TYPO3_CONSOLE_BIN} cleanup:localprocessedfiles -f
+
+date +"%d.%m.%Y %T"
 echo -e '* typo3 -q cleanup:orphanrecords'
 ${TYPO3_CONSOLE_BIN} -q cleanup:orphanrecords
 
