@@ -1,0 +1,2 @@
+-- fill in whatever you need for your project
+-- update be_groups set groupMods = replace(groupMods, 'web_brofix,', 'web_brofix,web_brofix_broken_links,web_brofix_manage_exclusions,');
